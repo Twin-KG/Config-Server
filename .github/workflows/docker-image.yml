@@ -15,7 +15,7 @@ jobs:
 
     - name: Build Spring Boot application
       run: |
-        ./mvn clean install
+        ./mvnw clean package
       #env:
         #SPRING_PROFILES_ACTIVE: production  # Set your desired Spring profiles
 
