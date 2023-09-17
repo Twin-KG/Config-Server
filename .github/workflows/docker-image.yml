@@ -1,22 +1,41 @@
-name: Docker Image CI
+name: Build and Push Docker Image
 
 on:
   push:
-    branches: [ "main" ]
-  pull_request:
-    branches: [ "main" ]
+    branches:
+      - main  # Change this to your main branch name
 
 jobs:
-
   build:
-
     runs-on: ubuntu-latest
 
     steps:
-    - uses: actions/checkout@v3
-    
-    - name: All the test and coverage check
-      run: mvn clean install 
-      
-    - name: Build the Docker image
-      run: docker build . -t zayarlinnnaung/config-server
+    - name: Checkout code
+      uses: actions/checkout@v3
+
+    - name: Set up JDK
+      uses: actions/setup-java@v3
+      with:
+        java-version: 17  # Change this to your desired Java version
+
+    - name: Build Spring Boot application
+      run: |
+        ./mvnw package -DskipTests
+      #env:
+        #SPRING_PROFILES_ACTIVE: production  # Set your desired Spring profiles
+
+    - name: Login to Docker Hub
+      run: echo ${{ secrets.DOCKERHUB_PASSWORD }} | docker login -u ${{ secrets.DOCKERHUB_USERNAME }} --password-stdin
+      env:
+        DOCKERHUB_USERNAME: ${{ secrets.DOCKERHUB_USERNAME }}
+        DOCKERHUB_PASSWORD: ${{ secrets.DOCKERHUB_PASSWORD }}
+
+    - name: Build and tag Docker image
+      run: |
+        docker build . -t zayarlinnnaung/config-server
+      env:
+        DOCKER_BUILDKIT: 1
+
+    - name: Push Docker image
+      run: |
+        docker push zayarlinnnaung/config-server:latest
