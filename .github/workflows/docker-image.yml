@@ -13,14 +13,9 @@ jobs:
     - name: Checkout code
       uses: actions/checkout@v3
 
-    # - name: Set up JDK
-    #   uses: actions/setup-java@v2
-    #   with:
-    #     java-version: 17  # Change this to your desired Java version
-
     - name: Build Spring Boot application
       run: |
-        ./mvnw package -DskipTests
+        ./mvn clean install
       #env:
         #SPRING_PROFILES_ACTIVE: production  # Set your desired Spring profiles
 
